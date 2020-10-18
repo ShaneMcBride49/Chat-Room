@@ -20,8 +20,7 @@ io.on("connection", (socket) => {
     socket.broadcast.emit("updateMessages", messageList);
   });
   socket.on("getMessages", () => {
-    console.log("Client disconnected");
-    clearInterval(interval);
+    socket.broadcast.emit("updateMessages", messageList);
   });
   socket.on("disconnect", () => {
     console.log("Client disconnected");

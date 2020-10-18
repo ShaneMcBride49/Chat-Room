@@ -43,9 +43,13 @@ function Chat() {
     socket.on("updateMessages", (messages) => {
       setMessageList(messages);
     });
-    socket.emit("getMessages");
+    // socket.on("connection", () => {
+    //   socket.broadcast.emit("updateMessages");
+    // });
+
     init = false;
   }
+  socket.emit("getMessages");
   return (
     <div className="Chat">
       <body>
@@ -53,7 +57,7 @@ function Chat() {
           <AllMessages list={messageList} />
         </ListGroup>
         <MessageInput
-          addMessage={setMessageList}
+          setMessageList={setMessageList}
           messageList={messageList}
           socket={socket}
         />
@@ -69,10 +73,10 @@ function AllMessages(messages) {
     return messages.list.map((i) => (
       <Message key={count++} name={i.name} message={i.message} />
     ));
-  } else return (<></>);
+  } else return <></>;
 }
 function Message(props) {
-  if (props.sender != "" && props.message!="") {
+  if (props.sender != "" && props.message != "") {
     return (
       <React.Fragment>
         <ListGroup.Item>
@@ -81,26 +85,26 @@ function Message(props) {
       </React.Fragment>
     );
   } else {
-    return <></>
+    return <></>;
   }
 }
 function MessageInput(props) {
   const [messageInput, setMessageInput] = useState("");
   function handleClick(event) {
     event.preventDefault();
+
+    props.setMessageList(
+      props.messageList.concat([
+        { sender: "Shane McBride", message: messageInput },
+      ])
+    );
     props.socket.emit(
       "updateMessages",
       props.messageList.concat([
         { sender: "Shane McBride", message: messageInput },
       ])
-    );
-
-    props.addMessage(
-      props.messageList.concat([
-        { sender: "Shane McBride", message: messageInput },
-      ])
-    );
-    setMessageInput("");
+      );
+      setMessageInput("");
   }
   return (
     <div className="ChatMessageInput">
